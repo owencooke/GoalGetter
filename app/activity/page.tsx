@@ -29,6 +29,27 @@ import {
 import { Parent } from "@/types/parent";
 import ky from "ky";
 
+const titles = {
+  stepsTaken: {
+    line: "Daily Steps Trends",
+    bar: "Daily Steps Comparison",
+  },
+  caloriesBurned: {
+    line: "Daily Calories Burned Trends",
+    bar: "Daily Calories Burned Comparison",
+  },
+  hoursSlept: {
+    line: "Daily Sleep Trends",
+    bar: "Daily Sleep Comparison",
+  },
+};
+
+const descriptions = {
+  stepsTaken: "Your steps taken over the past month",
+  caloriesBurned: "Your calories burned over the past month",
+  hoursSlept: "Your hours slept over the past month",
+};
+
 const getParent = async () => {
   try {
     const parents = await ky.get("/api/parents").json<Parent[]>();
@@ -45,6 +66,9 @@ export default function ActivityPage() {
   >("stepsTaken");
   const [parent, setParent] = useState<Parent | null>(null);
   const activityData = parent?.children[0].dailyStats || [];
+
+  const getTitle = () => titles[activeTab][chartType];
+  const getDescription = () => descriptions[activeTab];
 
   useEffect(() => {
     getParent().then((parent) => {
@@ -183,12 +207,8 @@ export default function ActivityPage() {
       </div>
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-xl md:text-2xl">
-            {chartType === "line"
-              ? "Daily Activity Trends"
-              : "Daily Activity Comparison"}
-          </CardTitle>
-          <CardDescription>Your activity over the past month</CardDescription>
+          <CardTitle className="text-xl md:text-2xl">{getTitle()}</CardTitle>
+          <CardDescription>{getDescription()}</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs
