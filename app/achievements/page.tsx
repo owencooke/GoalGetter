@@ -1,151 +1,127 @@
 "use client";
 
 import { useState } from "react";
+import { Award, Check, ChevronLeft, Lock, Star, Zap } from "lucide-react";
 import {
-  Moon,
-  Star,
-  Award,
-  Home,
-  ChevronRight,
-  Activity,
-  User,
-} from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-export default function KidsDashboard() {
-  const [stepCount, setStepCount] = useState(6234);
-  const [streakDays, setStreakDays] = useState(5);
-  const [sleepHours, setSleepHours] = useState(8.5);
+type Achievement = {
+  id: number;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  collected: boolean;
+  progress: number;
+};
 
-  const dailyStepGoal = 10000;
-  const stepProgress = (stepCount / dailyStepGoal) * 100;
+export default function AchievementsPage() {
+  const [achievements, setAchievements] = useState<Achievement[]>([
+    {
+      id: 1,
+      title: "First Steps",
+      description: "Walk 1000 steps in a day",
+      icon: <Zap className="h-6 w-6" />,
+      collected: true,
+      progress: 100,
+    },
+    {
+      id: 2,
+      title: "Sleep Champion",
+      description: "Get 8 hours of sleep for 7 days",
+      icon: <Star className="h-6 w-6" />,
+      collected: true,
+      progress: 100,
+    },
+    {
+      id: 3,
+      title: "Active Adventurer",
+      description: "Complete 10 different activities",
+      icon: <Award className="h-6 w-6" />,
+      collected: false,
+      progress: 60,
+    },
+    {
+      id: 4,
+      title: "Hydration Hero",
+      description: "Drink 8 glasses of water for 5 days",
+      icon: <Zap className="h-6 w-6" />,
+      collected: false,
+      progress: 40,
+    },
+    {
+      id: 5,
+      title: "Streak Superstar",
+      description: "Maintain a 30-day activity streak",
+      icon: <Star className="h-6 w-6" />,
+      collected: false,
+      progress: 20,
+    },
+  ]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary/20 flex items-center justify-center">
-              <User className="w-10 h-10 md:w-12 md:h-12 text-primary" />
-            </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-primary">
-              Hi, Tommy!
-            </h1>
-          </div>
-          <nav>
-            <ul className="flex space-x-4 md:space-x-6">
-              <li>
-                <Home className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-              </li>
-              <li>
-                <Activity className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-              </li>
-              <li>
-                <Award className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-              </li>
-            </ul>
-          </nav>
+    <div className="min-h-screen bg-background text-foreground p-4 md:p-8">
+      <div className="max-w-4xl mx-auto">
+        <header className="flex items-center justify-between mb-6">
+          <Button variant="ghost" size="icon" className="rounded-full">
+            <ChevronLeft className="h-6 w-6" />
+            <span className="sr-only">Go back</span>
+          </Button>
+          <h1 className="text-2xl md:text-3xl font-bold text-primary">
+            Achievements
+          </h1>
+          <div className="w-10" /> {/* Spacer for centering */}
         </header>
 
-        <main className="space-y-6 md:space-y-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl md:text-2xl">
-                Today's Activity
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div className="bg-secondary/50 p-4 rounded-lg">
-                  <p className="text-3xl md:text-4xl font-bold text-primary">
-                    {stepCount}
-                  </p>
-                  <p className="text-sm md:text-base text-muted-foreground">
-                    Steps
-                  </p>
-                </div>
-                <div className="bg-secondary/50 p-4 rounded-lg">
-                  <p className="text-3xl md:text-4xl font-bold text-primary">
-                    {streakDays}
-                  </p>
-                  <p className="text-sm md:text-base text-muted-foreground">
-                    Day Streak
-                  </p>
-                </div>
-                <div className="bg-secondary/50 p-4 rounded-lg">
-                  <p className="text-3xl md:text-4xl font-bold text-primary">
-                    {sleepHours}
-                  </p>
-                  <p className="text-sm md:text-base text-muted-foreground">
-                    Hours of Sleep
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="md:grid md:grid-cols-2 md:gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl md:text-2xl">
-                  Step Goal Progress
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <Progress value={stepProgress} className="h-4 md:h-6" />
-                  <p className="text-sm md:text-base text-muted-foreground font-medium">
-                    {stepCount} / {dailyStepGoal} steps
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl md:text-2xl">
-                  Your Achievements
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-around">
-                  <div className="text-center">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary/50 flex items-center justify-center mb-2">
-                      <Star className="w-10 h-10 md:w-12 md:h-12 text-primary" />
-                    </div>
-                    <p className="text-sm md:text-base font-medium text-muted-foreground">
-                      Star Stepper
-                    </p>
+        <ScrollArea className="h-[calc(100vh-120px)]">
+          <div className="space-y-4">
+            {achievements.map((achievement) => (
+              <Card
+                key={achievement.id}
+                className={
+                  achievement.collected ? "bg-secondary/20" : "bg-card"
+                }
+              >
+                <CardHeader className="flex flex-row items-center space-y-0 pb-2">
+                  <div
+                    className={`mr-4 rounded-full p-2 ${
+                      achievement.collected
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {achievement.icon}
                   </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary/50 flex items-center justify-center mb-2">
-                      <Moon className="w-10 h-10 md:w-12 md:h-12 text-primary" />
-                    </div>
-                    <p className="text-sm md:text-base font-medium text-muted-foreground">
-                      Sleep Champ
-                    </p>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg flex items-center">
+                      {achievement.title}
+                      {achievement.collected && (
+                        <Check className="ml-2 h-4 w-4 text-primary" />
+                      )}
+                    </CardTitle>
+                    <CardDescription>{achievement.description}</CardDescription>
                   </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary/50 flex items-center justify-center mb-2">
-                      <Award className="w-10 h-10 md:w-12 md:h-12 text-primary" />
-                    </div>
-                    <p className="text-sm md:text-base font-medium text-muted-foreground">
-                      5 Day Streak
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  {!achievement.collected && (
+                    <Lock className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </CardHeader>
+                <CardContent>
+                  <Progress value={achievement.progress} className="h-2" />
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {achievement.progress}% complete
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </main>
-
-        <footer className="mt-8 text-center">
-          <Button size="lg" className="font-semibold">
-            See More <ChevronRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
-          </Button>
-        </footer>
+        </ScrollArea>
       </div>
     </div>
   );
