@@ -45,9 +45,9 @@ const titles = {
 };
 
 const descriptions = {
-  stepsTaken: "Your steps taken over the past month",
-  caloriesBurned: "Your calories burned over the past month",
-  hoursSlept: "Your hours slept over the past month",
+  stepsTaken: "'s steps taken in the past few days",
+  caloriesBurned: "'s calories burned in the past few days",
+  hoursSlept: "'s hours slept in the past few days",
 };
 
 const getParent = async () => {
@@ -68,7 +68,8 @@ export default function ActivityPage() {
   const activityData = parent?.children[0].dailyStats || [];
 
   const getTitle = () => titles[activeTab][chartType];
-  const getDescription = () => descriptions[activeTab];
+  const getDescription = () =>
+    `${parent?.children[0].firstName}${descriptions[activeTab]}`;
 
   useEffect(() => {
     getParent().then((parent) => {
