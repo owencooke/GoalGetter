@@ -43,7 +43,7 @@ export default function Navigation() {
       <NavButton
         href="/achievements"
         icon={<Trophy className="mr-2 h-4 w-4" />}
-        label="Achievements"
+        label="Goals"
       />
       <NavButton
         href="/parent"
