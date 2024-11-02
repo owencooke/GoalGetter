@@ -14,13 +14,11 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { Parent } from "@/types/parent";
-import { Child } from "@/types/child";
 import { Goal, GoalType } from "@/types/goals";
 import { DailyStats } from "@/types/stats";
 
 export default function GoalsPage() {
   const [parent, setParent] = useState<Parent | null>(null);
-  const [child, setChild] = useState<Child | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,12 +27,6 @@ export default function GoalsPage() {
         const parents: Parent[] = await parentsResponse.json();
         if (parents.length > 0) {
           setParent(parents[0]);
-        }
-
-        const childrenResponse = await fetch("/api/children");
-        const children: Child[] = await childrenResponse.json();
-        if (children.length > 0) {
-          setChild(children[0]); // Assuming we're working with the first child
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -85,8 +77,8 @@ export default function GoalsPage() {
         <ScrollArea className="h-[calc(100vh-120px)]">
           <div className="space-y-4">
             {parent?.goals.map((goal) => {
-              const progress = child
-                ? getProgressForGoal(goal, child.dailyStats)
+              const progress = parent.children[0]
+                ? getProgressForGoal(goal, parent.children[0].dailyStats)
                 : 0;
               const isCompleted = progress >= 100;
 
