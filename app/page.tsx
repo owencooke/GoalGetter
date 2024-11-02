@@ -103,30 +103,43 @@ export default function KidsDashboard({ child }: { child: Child }) {
           <CardHeader>
             <CardTitle className="flex items-center text-2xl">
               <Target className="mr-2 text-primary" />
-              Current Goals
+              <TypingAnimation text="Current Goals" delay={200} />
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            {parent &&
-              parent.goals.map((goal, index) => {
-                const progress = getProgressForGoal(goal, todayStats);
-                if (progress >= 100) return null;
+          {parent && parent.goals.map((currentGoal, index) => {
+            let progressValue = 0;
+            let currentValue = 0;
+            console.log(currentGoal)
 
-                return (
-                  <div key={index} className="mb-4">
-                    <h3 className="text-xl font-semibold mb-2">{goal.title}</h3>
-                    <Progress
-                      value={progress}
-                      className="w-full h-4 rounded-full"
-                    />
-                    <div className="flex justify-between mt-2 text-sm">
-                      <p>{getGoalDescription(goal)}</p>
-                      <p>{progress.toFixed(2)}% complete</p>
-                    </div>
-                  </div>
-                );
-              })}
-          </CardContent>
+            // Determine current value and progress based on goal type
+            if (currentGoal.type === "stepCount") {
+              currentValue = todayStats?.stepsTaken || 0;
+              progressValue = (currentValue / currentGoal.threshold) * 100;
+            } else if (currentGoal.type === "hoursOfSleep") {
+              currentValue = todayStats?.hoursSlept || 0;
+              progressValue = (currentValue / currentGoal.threshold) * 100;
+            } else if (currentGoal.type === "calories") {
+              currentValue = todayStats?.caloriesBurned || 0;
+              progressValue = (currentValue / currentGoal.threshold) * 100;
+            }
+
+            if (progressValue >= 100 || currentGoal.completed) {
+              return;
+            }
+
+            return (
+              <CardContent key={index}>
+                <h3 className="text-xl font-semibold mb-2">
+                  <TypingAnimation text={currentGoal.title} delay={400} />
+                </h3>
+                <AnimatedProgress value={progressValue} delay={600} />
+                <div className="flex justify-between mt-2 text-sm">
+                  <p>{currentValue} / {currentGoal.threshold} {currentGoal.type === "stepCount" ? "steps" : currentGoal.type === "hoursOfSleep" ? "hours" : "calories"}</p>
+                  <p>{progressValue.toFixed(2)}% complete</p>
+                </div>
+              </CardContent>
+            );
+          })}
         </Card>
       </motion.div>
 
