@@ -160,7 +160,7 @@ export default function ParentDashboard({
               </Label>
               <Input
                 id="goal-title"
-                placeholder="Enter goal title"
+                placeholder="Enter an exciting title!"
                 value={newGoal.title}
                 onChange={(e) =>
                   setNewGoal({ ...newGoal, title: e.target.value })
@@ -176,7 +176,7 @@ export default function ParentDashboard({
                 <Input
                   id="threshold"
                   type="number"
-                  placeholder="Enter step count threshold"
+                  placeholder="0"
                   min={0}
                   value={newGoal.threshold === 0 ? "" : newGoal.threshold}
                   onChange={(e) => {
