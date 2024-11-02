@@ -7,6 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 import { Parent } from "@/types/parent";
 import { DailyStats } from "@/types/stats";
+import { Goal } from "@/types/goals";
 
 /**
  * Gets the most recent daily stats of the first child of the first parent.
@@ -22,7 +23,6 @@ export function getDailyStats(parents: Parent[]): DailyStats | null {
 
   const firstParent = parents[0];
 
-  // Check if the first parent has any children
   if (firstParent.children.length === 0) {
     console.warn("First parent has no children");
     return null;
@@ -30,12 +30,38 @@ export function getDailyStats(parents: Parent[]): DailyStats | null {
 
   const firstChild = firstParent.children[0];
 
-  // Check if the first child has any daily stats
   if (firstChild.dailyStats.length === 0) {
     console.warn("First child has no daily stats");
     return null;
   }
 
-  // Return the most recent daily stats
   return firstChild.dailyStats[firstChild.dailyStats.length - 1];
 }
+
+export const getProgressForGoal = (goal: Goal, stats: DailyStats | null) => {
+  if (!stats) return 0;
+
+  switch (goal.type) {
+    case "stepCount":
+      return Math.min((stats.stepsTaken / goal.threshold) * 100, 100);
+    case "hoursOfSleep":
+      return Math.min((stats.hoursSlept / goal.threshold) * 100, 100);
+    case "calories":
+      return Math.min((stats.caloriesBurned / goal.threshold) * 100, 100);
+    default:
+      return 0;
+  }
+};
+
+export const getGoalDescription = (goal: Goal) => {
+  switch (goal.type) {
+    case "stepCount":
+      return `${goal.threshold} steps`;
+    case "hoursOfSleep":
+      return `${goal.threshold} hours of sleep`;
+    case "calories":
+      return `${goal.threshold} calories burned`;
+    default:
+      return "";
+  }
+};
