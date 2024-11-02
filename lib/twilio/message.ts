@@ -8,7 +8,9 @@ export async function sendGoalCompleteTextToParent(
 ) {
   const goalTitles = goals.map((goal) => `📋 "${goal.title}"`).join("\n");
   const messageBody = `
-🎉 Congratulations! Your child has completed one of their goals:
+🎉 Congratulations! ${parent.children[0].firstName} has completed their goal${
+    goalTitles.length > 0 && "s"
+  }:
 
 ${goalTitles}
 
