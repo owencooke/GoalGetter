@@ -43,7 +43,7 @@ export default function Navigation() {
       <NavButton
         href="/achievements"
         icon={<Trophy className="mr-2 h-4 w-4" />}
-        label="Achievements"
+        label="Goals"
       />
       <NavButton
         href="/parent"
@@ -57,7 +57,7 @@ export default function Navigation() {
     <nav className="bg-white dark:bg-black text-primary dark:text-white border-b border-gray-200 dark:border-gray-800 p-4 sticky top-0 z-10">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="text-xl font-bold">
-          KidsStepTracker
+          GoalGetter
         </Link>
         <div className="hidden md:flex space-x-2">
           <NavButtons />

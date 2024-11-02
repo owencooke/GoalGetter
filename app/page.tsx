@@ -199,7 +199,7 @@ export default function KidsDashboard({ child }: { child: Child }) {
             <CardHeader>
               <CardTitle className="flex items-center text-2xl">
                 <Trophy className="mr-2 text-primary" />
-                Top Achievements
+                Completed Goals
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -217,7 +217,7 @@ export default function KidsDashboard({ child }: { child: Child }) {
                 variant="ghost"
                 className="w-full justify-between text-primary hover:text-primary-foreground hover:bg-primary"
               >
-                View All Achievements <ChevronRight size={20} />
+                View All Goals <ChevronRight size={20} />
               </Button>
             </CardFooter>
           </Card>
