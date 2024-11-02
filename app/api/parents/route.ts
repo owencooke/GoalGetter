@@ -8,6 +8,7 @@ import {
     doc,
     deleteDoc,
     addDoc,
+    updateDoc,
 } from "firebase/firestore";
 
 export async function GET() {
@@ -43,7 +44,6 @@ export async function POST(request: Request) {
     }
 }
 
-import { updateDoc } from "firebase/firestore";
 export async function PUT(request: Request) {
     try {
         const { id, ...updatedParentData }: Parent & { id: string } =
