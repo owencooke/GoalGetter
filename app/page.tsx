@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { motion, useAnimation, Variants } from 'framer-motion'
+import { motion, progress, useAnimation, Variants } from 'framer-motion'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
@@ -10,11 +10,12 @@ import { Trophy, Footprints, Target, Flame, Moon, ChevronRight } from 'lucide-re
 import type { Child } from '@/types/child'
 import type { Parent } from '@/types/parent'
 import ky from 'ky'
+import { getDailyStats } from '@/lib/utils'
 
 const getParent = async () => {
   try {
     const parents = await ky.get('/api/parents').json<Parent[]>()
-    return parents[0]
+    return parents;
   } catch (err) {
     console.error('Failed to get parents:', err)
   }
@@ -37,18 +38,21 @@ const cardVariants: Variants = {
 }
 
 export default function KidsDashboard({ child }: { child: Child }) {
-  const [parent, setParent] = useState<Parent | null>(null)
-  const controls = useAnimation()
+  const [parent, setParent] = useState<Parent | null>(null);
+  const [todayStats, setTodayStats] = useState<Object | null>(null);
+  const controls = useAnimation();
 
   useEffect(() => {
     getParent().then((parent) => {
       if (parent) {
-        console.log('Parent:', parent)
-        setParent(parent)
-        controls.start("visible")
+        console.log('Parent:', parent);
+        setParent(parent[0]);
+        console.log(getDailyStats(parent));
+        setTodayStats(getDailyStats(parent));
+        controls.start("visible");
       }
     })
-  }, [controls])
+  }, [controls, setTodayStats])
 
   const dailyActivity = {
     steps: 8423,
@@ -88,18 +92,40 @@ export default function KidsDashboard({ child }: { child: Child }) {
                 <TypingAnimation text="Current Goals" delay={200} />
               </CardTitle>
             </CardHeader>
-            {parent && parent.goals.map((currentGoal, index) => (
-              <CardContent key={index}>
-                <h3 className="text-xl font-semibold mb-2">
-                  <TypingAnimation text={currentGoal.title} delay={400} />
-                </h3>
-                <AnimatedProgress value={100000/currentGoal.threshold} delay={600} />
-                <div className="flex justify-between mt-2 text-sm">
-                  <p>{1000} / {currentGoal.threshold} steps</p>
-                  <p>{(100000 / currentGoal.threshold).toFixed(2)}% complete</p>
-                </div>
-              </CardContent>
-            ))}
+            {parent && parent.goals.map((currentGoal, index) => {
+              let progressValue = 0;
+              let currentValue = 0;
+              console.log(currentGoal)
+
+              // Determine current value and progress based on goal type
+              if (currentGoal.type === "stepCount") {
+                currentValue = todayStats?.stepsTaken || 0;
+                progressValue = (currentValue / currentGoal.threshold) * 100;
+              } else if (currentGoal.type === "hoursOfSleep") {
+                currentValue = todayStats?.hoursSlept || 0;
+                progressValue = (currentValue / currentGoal.threshold) * 100;
+              } else if (currentGoal.type === "calories") {
+                currentValue = todayStats?.caloriesBurned || 0;
+                progressValue = (currentValue / currentGoal.threshold) * 100;
+              }
+
+              if (progressValue >= 100 || currentGoal.completed) {
+                return;
+              }
+
+              return (
+                <CardContent key={index}>
+                  <h3 className="text-xl font-semibold mb-2">
+                    <TypingAnimation text={currentGoal.title} delay={400} />
+                  </h3>
+                  <AnimatedProgress value={progressValue} delay={600} />
+                  <div className="flex justify-between mt-2 text-sm">
+                    <p>{currentValue} / {currentGoal.threshold} {currentGoal.type === "stepCount" ? "steps" : currentGoal.type === "hoursOfSleep" ? "hours" : "calories"}</p>
+                    <p>{progressValue.toFixed(2)}% complete</p>
+                  </div>
+                </CardContent>
+              );
+            })}
           </Card>
         </Link>
       </motion.div>
@@ -120,9 +146,9 @@ export default function KidsDashboard({ child }: { child: Child }) {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-3 gap-4">
-                <ActivityItem icon={Footprints} value={dailyActivity.steps} label="steps" delay={1000} />
-                <ActivityItem icon={Flame} value={dailyActivity.calories} label="calories" delay={1200} />
-                <ActivityItem icon={Moon} value={dailyActivity.sleep} label="hours" delay={1400} />
+                <ActivityItem icon={Footprints} value={todayStats ? todayStats?.stepsTaken : 0} label="steps" delay={1000} />
+                <ActivityItem icon={Flame} value={todayStats ? todayStats?.caloriesBurned : 0} label="calories" delay={1200} />
+                <ActivityItem icon={Moon} value={todayStats ? todayStats?.hoursSlept: 0} label="hours" delay={1400} />
               </div>
             </CardContent>
             <CardFooter>
