@@ -1,6 +1,9 @@
 import { db } from "@/lib/firebase/config";
 import { NextResponse } from "next/server";
 import { collection, getDocs, query, updateDoc } from "firebase/firestore";
+import { checkGoalsCompletion } from "@/lib/goals/complete";
+import { sendGoalCompleteTextToParent } from "@/lib/twilio/message";
+import { Parent } from "@/types/parent";
 
 export async function POST(request: Request) {
   try {
@@ -71,6 +74,13 @@ export async function POST(request: Request) {
 
     // Update the parent document with the modified children array
     await updateDoc(parentDoc.ref, { children });
+
+    const completedGoals = checkGoalsCompletion(children[0], parentData.goals);
+
+    if (completedGoals.length > 0) {
+      // Send SMS to parent
+      sendGoalCompleteTextToParent(parentData as Parent, completedGoals);
+    }
 
     return NextResponse.json({ message: "Data added successfully" });
   } catch (error: any) {
