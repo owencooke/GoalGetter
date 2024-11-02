@@ -208,7 +208,7 @@ export default function ActivityPage() {
       </div>
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-xl md:text-2xl">{getTitle()}</CardTitle>
+          <CardTitle className="text-xl md:text-2xl text-primary">{getTitle()}</CardTitle>
           <CardDescription>{getDescription()}</CardDescription>
         </CardHeader>
         <CardContent>
