@@ -12,7 +12,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { Plus, X, Check, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +32,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 
 interface NewGoal {
   type: GoalType;
@@ -69,7 +68,6 @@ export default function ParentDashboard({
     if (newGoal.description.trim() === "") return;
 
     const goalToAdd: Goal = {
-      id: Date.now(),
       description: newGoal.description,
       completed: false,
       type: newGoal.type,
