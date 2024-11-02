@@ -17,6 +17,7 @@ def send_wearable_data(file_path, row_index, api_url):
         "active_minutes": int(row["active_minutes"]),
         "sleep_hours": float(row["sleep_hours"]),
         "heart_rate_avg": float(row["heart_rate_avg"]),
+        "date": str(row["date"]).split()[0],  # Only get the date part
     }
 
     # Make the POST request
@@ -32,4 +33,7 @@ if __name__ == "__main__":
     row_index = 0
     api_url = "http://localhost:3000/api/wearable"
 
-    send_wearable_data(file_path, row_index, api_url)
+    # send_wearable_data(file_path, row_index, api_url)
+
+    for i in range(8):
+        send_wearable_data(file_path, i, api_url)

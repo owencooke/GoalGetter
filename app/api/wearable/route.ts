@@ -12,6 +12,7 @@ export async function POST(request: Request) {
       active_minutes,
       sleep_hours,
       heart_rate_avg,
+      date,
     } = body;
 
     // Validate required fields
@@ -21,7 +22,8 @@ export async function POST(request: Request) {
       !distance_km ||
       !active_minutes ||
       !sleep_hours ||
-      !heart_rate_avg
+      !heart_rate_avg ||
+      !date
     ) {
       return NextResponse.json(
         { message: "Missing required fields" },
@@ -61,7 +63,7 @@ export async function POST(request: Request) {
       active_minutes,
       hoursSlept: sleep_hours,
       heart_rate_avg,
-      timestamp: new Date().toISOString(),
+      date,
     });
 
     // Update the children array with the modified dailyStats
