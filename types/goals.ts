@@ -1,4 +1,4 @@
-export type GoalType = "stepsTaken" | "hoursSlept" | "caloriesBurned";
+export type GoalType = "stepCount" | "hoursOfSleep" | "calories";
 
 export interface Goal {
   id?: number;

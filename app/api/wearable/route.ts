@@ -76,7 +76,9 @@ export async function POST(request: Request) {
     // Update the parent document with the modified children array
     await updateDoc(parentDoc.ref, { children });
 
+    console.log({ newStat, goals: parentData.goals });
     const completedGoals = checkGoalsCompletion(newStat, parentData.goals);
+    console.log({ completedGoals });
 
     if (completedGoals.length > 0) {
       // Send SMS to parent
