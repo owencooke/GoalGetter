@@ -14,7 +14,9 @@ import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-export default function KidsDashboard() {
+import { Child } from "@/types/child";
+
+export default function KidsDashboard({ child }: { child: Child }) {
   const [stepCount, setStepCount] = useState(6234);
   const [streakDays, setStreakDays] = useState(5);
   const [sleepHours, setSleepHours] = useState(8.5);
