@@ -23,7 +23,7 @@ const childData: Child = {
 
 export async function GET() {
     try {
-        const snapshot = await getDocs(collection(db, "kids"));
+        const snapshot = await getDocs(collection(db, "child"));
         const children: Child[] = snapshot.docs.map(
             (doc) =>
                 ({
@@ -41,14 +41,14 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
-        const newKid: Child = await request.json();
-        const docRef = await addDoc(collection(db, "kids"), {
-            ...newKid,
+        const newChild: Child = await request.json();
+        const docRef = await addDoc(collection(db, "child"), {
+            ...newChild,
         });
-        return NextResponse.json({ id: docRef.id, ...newKid });
+        return NextResponse.json({ id: docRef.id, ...newChild });
     } catch (error: any) {
         return NextResponse.json(
-            { error: "Failed to add kid", message: error.message },
+            { error: "Failed to add child", message: error.message },
             { status: 500 }
         );
     }
@@ -56,16 +56,16 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
     try {
-        const { id, ...updatedKidData }: Child & { id: string } =
+        const { id, ...updatedChildData }: Child & { id: string } =
             await request.json();
 
-        const docRef = doc(db, "kids", id);
+        const docRef = doc(db, "child", id);
 
         await updateDoc(docRef, {
-            ...updatedKidData,
+            ...updatedChildData,
         });
 
-        return NextResponse.json({ id, ...updatedKidData });
+        return NextResponse.json({ id, ...updatedChildData });
     } catch (error: any) {
         return NextResponse.json(
             { error: "Failed to update child", message: error.message },
