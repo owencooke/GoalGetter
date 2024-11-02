@@ -10,14 +10,36 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Trophy, Footprints, Target, ChevronRight } from "lucide-react";
+import { Trophy, Footprints, Target, Flame, Moon, ChevronRight } from "lucide-react";
 import { Child } from "@/types/child";
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
+import { Parent } from "@/types/parent";
+import ky from "ky";
+
+const getParent = async () => {
+  try {
+    const parents = await ky.get("/api/parents").json<Parent[]>();
+    return parents[0];
+  } catch (err) {
+    console.error("Failed to get parents:", err);
+  }
+}
 
 export default function KidsDashboard({ child }: { child: Child }) {
   const [stepCount, setStepCount] = useState(6234);
   const [streakDays, setStreakDays] = useState(5);
   const [sleepHours, setSleepHours] = useState(8.5);
+
+  const [parent, setParent] = useState<Parent | null>(null);
+
+  useEffect(() => {
+    getParent().then((parent) => {
+      if (parent) {
+        console.log("Parent:", parent);
+        setParent(parent);
+      }
+    });
+  }, []);
 
   const currentGoal = {
     title: "Walk to the Moon",
@@ -29,6 +51,7 @@ export default function KidsDashboard({ child }: { child: Child }) {
     steps: 8423,
     calories: 320,
     distance: 6.7,
+    sleep: 8.5,
   };
 
   const achievements = [
@@ -47,57 +70,60 @@ export default function KidsDashboard({ child }: { child: Child }) {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Target className="mr-2" />
-              Current Goal
+              Current Goals
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <h3 className="text-xl font-semibold mb-2">{currentGoal.title}</h3>
-            <p className="text-muted-foreground mb-4">
-              {currentGoal.description}
-            </p>
-            <Progress value={currentGoal.progress} className="w-full" />
-            <p className="text-right mt-2">{currentGoal.progress}% complete</p>
-          </CardContent>
-          <CardFooter>
-            <Button variant="ghost" className="w-full justify-between">
-              View Goal Details <ChevronRight size={20} />
-            </Button>
-          </CardFooter>
+          {parent && parent.goals.map((currentGoal, index) => (
+            <CardContent>
+              <h3 className="text-xl font-semibold mb-2">{currentGoal.title}</h3>
+              {/* <p className="text-muted-foreground mb-4">
+                {currentGoal.description}
+              </p> */}
+              <Progress value={100000/currentGoal.threshold} className="w-full" />
+              <div className="flex justify-between mt-2">
+                <p>{1000} / {currentGoal.threshold} steps</p>
+                <p>{(100000 / currentGoal.threshold).toFixed(2)}% complete</p>
+              </div>
+            </CardContent>
+          ))}
         </Card>
       </Link>
 
       {/* Daily Activity */}
       <Link href="/activity" className="block">
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Footprints className="mr-2" />
-              Today's Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center">
-                <span className="text-4xl font-bold">
-                  {dailyActivity.steps}
-                </span>
-                <span className="ml-2 text-xl text-muted-foreground">
-                  steps
-                </span>
-              </div>
-              <div className="text-right">
-                <p>{dailyActivity.calories} calories</p>
-                <p>{dailyActivity.distance} km</p>
-              </div>
+      <Card className="hover:shadow-lg transition-shadow">
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Footprints className="mr-2" />
+            Today's Activity
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="flex flex-col items-center">
+              <Footprints className="mb-2 text-primary" size={24} />
+              <span className="text-2xl font-bold">{dailyActivity.steps}</span>
+              <span className="text-sm text-muted-foreground">steps</span>
             </div>
-          </CardContent>
-          <CardFooter>
-            <Button variant="ghost" className="w-full justify-between">
-              View Activity Details <ChevronRight size={20} />
-            </Button>
-          </CardFooter>
-        </Card>
-      </Link>
+            <div className="flex flex-col items-center">
+              <Flame className="mb-2 text-primary" size={24} />
+              <span className="text-2xl font-bold">{dailyActivity.calories}</span>
+              <span className="text-sm text-muted-foreground">calories</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <Moon className="mb-2 text-primary" size={24} />
+              <span className="text-2xl font-bold">{dailyActivity.sleep}</span>
+              <span className="text-sm text-muted-foreground">hours</span>
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button variant="ghost" className="w-full justify-between">
+            View Activity Details <ChevronRight size={20} />
+          </Button>
+        </CardFooter>
+      </Card>
+    </Link>
 
       {/* Achievements */}
       <Link href="/achievements" className="block">
