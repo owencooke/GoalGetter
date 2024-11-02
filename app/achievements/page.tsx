@@ -16,7 +16,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Parent } from "@/types/parent";
 import { Goal, GoalType } from "@/types/goals";
 import { DailyStats } from "@/types/stats";
-import { getDailyStats } from "@/lib/utils";
+import {
+  getDailyStats,
+  getGoalDescription,
+  getProgressForGoal,
+} from "@/lib/utils";
 
 export default function GoalsPage() {
   const [parent, setParent] = useState<Parent | null>(null);
@@ -50,34 +54,6 @@ export default function GoalsPage() {
         return <Flame className="h-6 w-6" />;
       default:
         return <Zap className="h-6 w-6" />;
-    }
-  };
-
-  const getProgressForGoal = (goal: Goal, stats: DailyStats | null) => {
-    if (!stats) return 0;
-
-    switch (goal.type) {
-      case "stepCount":
-        return Math.min((stats.stepsTaken / goal.threshold) * 100, 100);
-      case "hoursOfSleep":
-        return Math.min((stats.hoursSlept / goal.threshold) * 100, 100);
-      case "calories":
-        return Math.min((stats.caloriesBurned / goal.threshold) * 100, 100);
-      default:
-        return 0;
-    }
-  };
-
-  const getGoalDescription = (goal: Goal) => {
-    switch (goal.type) {
-      case "stepCount":
-        return `${goal.threshold} steps`;
-      case "hoursOfSleep":
-        return `${goal.threshold} hours of sleep`;
-      case "calories":
-        return `${goal.threshold} calories burned`;
-      default:
-        return "";
     }
   };
 
