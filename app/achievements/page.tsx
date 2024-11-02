@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Check, ChevronLeft, Lock, Zap, Moon } from "lucide-react";
+import { Check, ChevronLeft, Lock, Zap, Moon, Flame } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -16,9 +16,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Parent } from "@/types/parent";
 import { Goal, GoalType } from "@/types/goals";
 import { DailyStats } from "@/types/stats";
+import { getDailyStats } from "@/lib/utils";
 
 export default function GoalsPage() {
   const [parent, setParent] = useState<Parent | null>(null);
+  const [dailyStats, setDailyStats] = useState<DailyStats | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +29,8 @@ export default function GoalsPage() {
         const parents: Parent[] = await parentsResponse.json();
         if (parents.length > 0) {
           setParent(parents[0]);
+          const stats = getDailyStats(parents);
+          setDailyStats(stats);
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -42,23 +46,38 @@ export default function GoalsPage() {
         return <Zap className="h-6 w-6" />;
       case "hoursOfSleep":
         return <Moon className="h-6 w-6" />;
+      case "calories":
+        return <Flame className="h-6 w-6" />;
       default:
         return <Zap className="h-6 w-6" />;
     }
   };
 
-  const getProgressForGoal = (goal: Goal, dailyStats: DailyStats[]) => {
-    if (!dailyStats || dailyStats.length === 0) return 0;
-
-    const latestStats = dailyStats[dailyStats.length - 1]; // Get the most recent stats
+  const getProgressForGoal = (goal: Goal, stats: DailyStats | null) => {
+    if (!stats) return 0;
 
     switch (goal.type) {
       case "stepCount":
-        return Math.min((latestStats.stepsTaken / goal.threshold) * 100, 100);
+        return Math.min((stats.stepsTaken / goal.threshold) * 100, 100);
       case "hoursOfSleep":
-        return Math.min((latestStats.hoursSlept / goal.threshold) * 100, 100);
+        return Math.min((stats.hoursSlept / goal.threshold) * 100, 100);
+      case "calories":
+        return Math.min((stats.caloriesBurned / goal.threshold) * 100, 100);
       default:
         return 0;
+    }
+  };
+
+  const getGoalDescription = (goal: Goal) => {
+    switch (goal.type) {
+      case "stepCount":
+        return `${goal.threshold} steps`;
+      case "hoursOfSleep":
+        return `${goal.threshold} hours of sleep`;
+      case "calories":
+        return `${goal.threshold} calories burned`;
+      default:
+        return "";
     }
   };
 
@@ -77,9 +96,7 @@ export default function GoalsPage() {
         <ScrollArea className="h-[calc(100vh-120px)]">
           <div className="space-y-4">
             {parent?.goals.map((goal) => {
-              const progress = parent.children[0]
-                ? getProgressForGoal(goal, parent.children[0].dailyStats)
-                : 0;
+              const progress = getProgressForGoal(goal, dailyStats);
               const isCompleted = progress >= 100;
 
               return (
@@ -105,9 +122,7 @@ export default function GoalsPage() {
                         )}
                       </CardTitle>
                       <CardDescription>
-                        {goal.type === "stepCount"
-                          ? `${goal.threshold} steps`
-                          : `${goal.threshold} hours of sleep`}
+                        {getGoalDescription(goal)}
                       </CardDescription>
                     </div>
                     {!isCompleted && (
