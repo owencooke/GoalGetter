@@ -30,10 +30,10 @@ def send_wearable_data(file_path, row_index, api_url):
 
 if __name__ == "__main__":
     file_path = "./fitness_tracker_dataset.xlsx"
-    row_index = 0
+    row_index = 7
     api_url = "http://localhost:3000/api/wearable"
 
-    # send_wearable_data(file_path, row_index, api_url)
+    send_wearable_data(file_path, row_index, api_url)
 
-    for i in range(8):
-        send_wearable_data(file_path, i, api_url)
+    # for i in range(8):
+    #     send_wearable_data(file_path, i, api_url)

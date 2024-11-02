@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     const dailyStats = children[0].dailyStats || [];
 
     // Append the new data to the dailyStats array
-    dailyStats.push({
+    const newStat = {
       stepsTaken: steps,
       caloriesBurned: calories_burned,
       distance_km,
@@ -67,7 +67,8 @@ export async function POST(request: Request) {
       hoursSlept: sleep_hours,
       heart_rate_avg,
       date,
-    });
+    };
+    dailyStats.push(newStat);
 
     // Update the children array with the modified dailyStats
     children[0].dailyStats = dailyStats;
@@ -75,7 +76,7 @@ export async function POST(request: Request) {
     // Update the parent document with the modified children array
     await updateDoc(parentDoc.ref, { children });
 
-    const completedGoals = checkGoalsCompletion(children[0], parentData.goals);
+    const completedGoals = checkGoalsCompletion(newStat, parentData.goals);
 
     if (completedGoals.length > 0) {
       // Send SMS to parent
