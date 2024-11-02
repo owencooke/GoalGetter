@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import ky from "ky";
 
 interface NewGoal {
   type: GoalType;
@@ -45,26 +46,39 @@ const defaultNewGoal: NewGoal = {
   threshold: 0,
 };
 
-export default function ParentDashboard({
-  params,
-}: {
-  params: { id: string };
-}) {
+const getParent = async () => {
+  try {
+    const parents = await ky.get("/api/parents").json<Parent[]>();
+    return parents[0];
+  } catch (err) {
+    console.error("Failed to get parents:", err);
+  }
+};
+
+const putParent = async (parent: Parent) => {
+  try {
+    await ky.put("/api/parents", { json: parent });
+  } catch (err) {
+    console.error("Failed to update parent:", err);
+  }
+};
+
+export default function ParentDashboard() {
   const [parent, setParent] = useState<Parent | null>(null);
   const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
   const [newGoal, setNewGoal] = useState<NewGoal>(defaultNewGoal);
-  const { id } = params;
 
   useEffect(() => {
-    if (id) {
-      fetch(`/api/parent/${id}`)
-        .then((response) => response.json())
-        .then((data) => setParent(data))
-        .catch((error) => console.error("Error fetching parent data:", error));
-    }
-  }, [id]);
+    getParent().then((parent) => {
+      if (parent) {
+        console.log("Parent:", parent);
+        setParent(parent);
+      }
+    });
+  }, []);
 
   const addGoal = () => {
+    if (!parent) return;
     if (newGoal.title.trim() === "") return;
 
     const goalToAdd: Goal = {
@@ -74,23 +88,15 @@ export default function ParentDashboard({
       threshold: newGoal.threshold,
     };
 
-    setParent((prevParent) => {
-      if (!prevParent)
-        return {
-          parentId: 0,
-          firstName: "",
-          lastname: "",
-          phoneNumber: "",
-          goals: [goalToAdd],
-        };
-      return {
-        ...prevParent,
-        goals: [...prevParent.goals, goalToAdd],
-      };
-    });
+    const newParent = {
+      ...parent,
+      goals: [...parent.goals, goalToAdd],
+    };
 
-    // TODO: post new goal to backend
+    // Add new goal to backend
+    putParent(newParent);
 
+    setParent(newParent);
     setNewGoal(defaultNewGoal);
     setIsAddGoalOpen(false);
   };
@@ -98,12 +104,14 @@ export default function ParentDashboard({
   const deleteGoal = (goalId: number) => {
     setParent((prevParent) => {
       if (!prevParent) return prevParent;
-      return {
+      const updatedParent = {
         ...prevParent,
-        goals: prevParent.goals.filter((goal) => goal.id !== goalId),
+        goals: prevParent.goals.filter((_, index) => index !== goalId),
       };
+      // Update the backend with the new parent data
+      putParent(updatedParent);
+      return updatedParent;
     });
-    // TODO: delete goal in backend
   };
 
   return (
@@ -221,7 +229,7 @@ export default function ParentDashboard({
               <p className="text-muted-foreground">No goals set yet.</p>
             ) : (
               <AnimatePresence>
-                {parent?.goals.map((goal) => (
+                {parent?.goals.map((goal, idx) => (
                   <motion.div
                     key={goal.id}
                     initial={{ opacity: 0, x: -20 }}
@@ -249,9 +257,7 @@ export default function ParentDashboard({
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => {
-                            goal.id && deleteGoal(goal.id);
-                          }}
+                          onClick={() => deleteGoal(idx)}
                           className="text-destructive hover:text-destructive/90"
                         >
                           <Trash2 className="h-4 w-4" />

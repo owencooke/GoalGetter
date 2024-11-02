@@ -18,6 +18,7 @@ export async function GET() {
       (doc) =>
         ({
           ...doc.data(),
+          id: doc.id,
         } as Parent)
     );
     return NextResponse.json(parents);
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
     const docRef = await addDoc(collection(db, "parents"), {
       ...newParent,
     });
-    return NextResponse.json({ id: docRef.id, ...newParent });
+    return NextResponse.json({ ...newParent, id: docRef.id });
   } catch (error: any) {
     return NextResponse.json(
       { error: "Failed to add parent", message: error.message },
@@ -46,8 +47,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const { id, ...updatedParentData }: Parent & { id: string } =
-      await request.json();
+    const { id, ...updatedParentData }: Parent = await request.json();
 
     const docRef = doc(db, "parents", id);
 
