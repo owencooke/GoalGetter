@@ -1,9 +1,12 @@
 import { Goal } from "./goals";
+import { Child } from "./child";
 
 export interface Parent {
-    parentId: number;
     firstName: string;
     lastname: string;
     phoneNumber: string;
-    Goals: Goal[];
+    lat: number;
+    long: number;
+    children: Child[];
+    goals: Goal[];
 }
