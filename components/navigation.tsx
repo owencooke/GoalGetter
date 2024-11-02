@@ -51,9 +51,9 @@ export default function Navigation() {
             label="Achievements"
           />
           <NavButton
-            href="/profile"
+            href="/parent/1"
             icon={<User className="mr-2 h-4 w-4" />}
-            label="Profile"
+            label="Admin"
           />
         </div>
         <Button
