@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 interface NewGoal {
   type: GoalType;
@@ -183,21 +184,13 @@ export default function ParentDashboard({
                     </span>
                     {goal.type === "stepCount" && (
                       <p className="text-sm text-muted-foreground">
-                        Step Count Threshold: {goal.threshold}
+                        Step Count Goal: {goal.threshold}
                       </p>
                     )}
                   </div>
-                  <Button
-                    variant={goal.completed ? "outline" : "default"}
-                    size="sm"
-                  >
-                    {goal.completed ? (
-                      <X className="mr-2 h-4 w-4" />
-                    ) : (
-                      <Check className="mr-2 h-4 w-4" />
-                    )}
-                    {goal.completed ? "Undo" : "Complete"}
-                  </Button>
+                  <Badge variant={goal.completed ? "outline" : "default"}>
+                    {goal.completed ? "Completed ✅" : "In Progress ⏳"}
+                  </Badge>
                 </li>
               ))}
             </ul>
