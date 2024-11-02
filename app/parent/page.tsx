@@ -158,7 +158,8 @@ export default function ParentDashboard() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="stepCount">Step Count</SelectItem>
-                  {/* Add more goal types here in the future */}
+                  <SelectItem value="calories">Calories</SelectItem>
+                  <SelectItem value="hoursOfSleep">Hours of Sleep</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -176,7 +177,7 @@ export default function ParentDashboard() {
                 className="bg-secondary text-secondary-foreground"
               />
             </div>
-            {newGoal.type === "stepCount" && (
+            {newGoal.type && (
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="threshold" className="text-primary">
                   Goal Threshold
@@ -245,6 +246,16 @@ export default function ParentDashboard() {
                         {goal.type === "stepCount" && (
                           <p className="text-sm text-secondary-foreground">
                             Step Count Goal: {goal.threshold}
+                          </p>
+                        )}
+                        {goal.type === "calories" && (
+                          <p className="text-sm text-secondary-foreground">
+                            Calories Burned Goal: {goal.threshold}
+                          </p>
+                        )}
+                        {goal.type === "hoursOfSleep" && (
+                          <p className="text-sm text-secondary-foreground">
+                            Hours of Sleep Goal: {goal.threshold}
                           </p>
                         )}
                       </div>
