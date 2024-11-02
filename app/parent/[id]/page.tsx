@@ -2,16 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Parent } from "@/types/parents";
-import { Goal } from "@/types/goals";
+import { Goal, GoalType } from "@/types/goals";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import { Plus, X, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -25,6 +23,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+interface NewGoal {
+  type: GoalType;
+  description: string;
+  threshold: number;
+}
+
+const defaultNewGoal: NewGoal = {
+  type: "stepCount",
+  description: "",
+  threshold: 0,
+};
 
 export default function ParentDashboard({
   params,
@@ -32,10 +49,8 @@ export default function ParentDashboard({
   params: { id: string };
 }) {
   const [parent, setParent] = useState<Parent | null>(null);
-  const [newGoalDescription, setNewGoalDescription] = useState("");
-  const [useStepThreshold, setUseStepThreshold] = useState(false);
   const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
-  const [newStepThreshold, setNewStepThreshold] = useState("");
+  const [newGoal, setNewGoal] = useState<NewGoal>(defaultNewGoal);
   const { id } = params;
 
   useEffect(() => {
@@ -48,78 +63,32 @@ export default function ParentDashboard({
   }, [id]);
 
   const addGoal = () => {
-    if (newGoalDescription.trim() === "") return;
+    if (newGoal.description.trim() === "") return;
 
-    const newGoal: Goal = {
-      id: Date.now(),
-      description: newGoalDescription,
+    const goalToAdd: Goal = {
+      description: newGoal.description,
       completed: false,
+      type: newGoal.type,
+      threshold: newGoal.threshold,
     };
 
-    // TODO: post new goal
     setParent((prevParent) => {
-      if (!prevParent) return prevParent;
+      if (!prevParent) return { phoneNumber: "", goals: [goalToAdd] };
       return {
         ...prevParent,
-        goals: [...prevParent.goals, newGoal],
+        goals: [...prevParent.goals, goalToAdd],
       };
     });
 
-    setNewGoalDescription("");
+    // TODO: post new goal to backend
+
+    setNewGoal(defaultNewGoal);
     setIsAddGoalOpen(false);
-  };
-
-  const toggleGoalCompletion = (goalId: number) => {
-    setParent((prevParent) => {
-      if (!prevParent) return prevParent;
-      return {
-        ...prevParent,
-        goals: prevParent.goals.map((goal) =>
-          goal.id === goalId ? { ...goal, completed: !goal.completed } : goal
-        ),
-      };
-    });
-  };
-
-  const updateStepThreshold = () => {
-    const threshold = parseInt(newStepThreshold);
-    if (isNaN(threshold)) return;
-
-    setParent((prevParent) => {
-      if (!prevParent) return prevParent;
-      return {
-        ...prevParent,
-        dailyStepThreshold: threshold,
-      };
-    });
-
-    // TODO: update step threshold in the backend
-    setNewStepThreshold("");
   };
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Parent Dashboard</h1>
-
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Daily Step Threshold</CardTitle>
-          <CardDescription>
-            Set the daily step count goal for your child
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center space-x-2">
-            <Input
-              type="number"
-              value={newStepThreshold}
-              onChange={(e) => setNewStepThreshold(e.target.value)}
-              placeholder={`Current: ${parent?.dailyStepThreshold || 0} steps`}
-            />
-            <Button onClick={updateStepThreshold}>Update</Button>
-          </div>
-        </CardContent>
-      </Card>
 
       <Dialog open={isAddGoalOpen} onOpenChange={setIsAddGoalOpen}>
         <DialogTrigger asChild>
@@ -130,30 +99,56 @@ export default function ParentDashboard({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Goal</DialogTitle>
-            <DialogDescription>
-              Set a new step count goal for your child
-            </DialogDescription>
+            <DialogDescription>Set a new goal for your child</DialogDescription>
           </DialogHeader>
           <div className="flex flex-col space-y-4">
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="goal-type">Goal Type</Label>
+              <Select
+                value={newGoal.type}
+                onValueChange={(value: GoalType) =>
+                  setNewGoal({ ...newGoal, type: value })
+                }
+              >
+                <SelectTrigger id="goal-type">
+                  <SelectValue placeholder="Select goal type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="stepCount">Step Count</SelectItem>
+                  {/* Add more goal types here in the future */}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="flex flex-col space-y-2">
               <Label htmlFor="goal-description">Goal Description</Label>
               <Input
                 id="goal-description"
                 placeholder="Enter goal description"
-                value={newGoalDescription}
-                onChange={(e) => setNewGoalDescription(e.target.value)}
+                value={newGoal.description}
+                onChange={(e) =>
+                  setNewGoal({ ...newGoal, description: e.target.value })
+                }
               />
             </div>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="use-threshold"
-                checked={useStepThreshold}
-                onCheckedChange={setUseStepThreshold}
-              />
-              <Label htmlFor="use-threshold">
-                Use daily step threshold ({parent?.dailyStepThreshold} steps)
-              </Label>
-            </div>
+            {newGoal.type === "stepCount" && (
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="threshold">Goal Threshold</Label>
+                <Input
+                  id="threshold"
+                  type="number"
+                  placeholder="Enter step count threshold"
+                  min={0}
+                  value={newGoal.threshold === 0 ? "" : newGoal.threshold}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewGoal({
+                      ...newGoal,
+                      threshold: value === "" ? 0 : parseInt(value, 10),
+                    });
+                  }}
+                />
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button onClick={addGoal}>Add Goal</Button>
@@ -176,17 +171,25 @@ export default function ParentDashboard({
                   key={goal.id}
                   className="flex items-center justify-between p-2 border rounded"
                 >
-                  <span
-                    className={
-                      goal.completed ? "line-through text-muted-foreground" : ""
-                    }
-                  >
-                    {goal.description}
-                  </span>
+                  <div>
+                    <span
+                      className={
+                        goal.completed
+                          ? "line-through text-muted-foreground"
+                          : ""
+                      }
+                    >
+                      {goal.description}
+                    </span>
+                    {goal.type === "stepCount" && (
+                      <p className="text-sm text-muted-foreground">
+                        Step Count Threshold: {goal.threshold}
+                      </p>
+                    )}
+                  </div>
                   <Button
                     variant={goal.completed ? "outline" : "default"}
                     size="sm"
-                    onClick={() => toggleGoalCompletion(goal.id)}
                   >
                     {goal.completed ? (
                       <X className="mr-2 h-4 w-4" />
