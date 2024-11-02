@@ -261,11 +261,40 @@ export default function ParentDashboard() {
                           </p>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Badge
-                            variant={goal.completed ? "secondary" : "default"}
-                            className="text-xs font-semibold px-2 py-1"
-                          >
-                            {goal.completed ? "Completed ✅" : "In Progress ⏳"}
+                        <Badge
+                            variant={
+                                goal.type
+                                    ? "secondary"
+                                    : "default"
+                            }
+                        >
+                            {(() => {
+                                const latestStats =
+                                    parent.children[0]?.dailyStats?.at(
+                                        -1
+                                    );
+                                if (!latestStats)
+                                    return "No Data from child today";
+
+                                if (
+                                    (goal.type ===
+                                        "stepCount" &&
+                                        latestStats.stepsTaken >=
+                                            goal.threshold) ||
+                                    (goal.type ===
+                                        "calories" &&
+                                        latestStats.caloriesBurned >=
+                                            goal.threshold) ||
+                                    (goal.type ===
+                                        "hoursOfSleep" &&
+                                        latestStats.hoursSlept >=
+                                            goal.threshold)
+                                ) {
+                                    return "Completed ✅";
+                                } else {
+                                    return "In Progress ⏳";
+                                }
+                            })()}
                           </Badge>
                           <Button
                             variant="ghost"
