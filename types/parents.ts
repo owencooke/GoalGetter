@@ -1,11 +1,8 @@
 import { Goal } from "./goals";
 
-interface Parent {
+export interface Parent {
+    firstName: string;
+    lastname: string;
     phoneNumber: string;
     Goals: Goal[];
-    dailyStepThreshold: number;
-    dateCreated: Date;
-    description: string;
-    title: string;
-    completed: boolean;
 }
