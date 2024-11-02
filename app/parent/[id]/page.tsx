@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Label } from "@/components/ui/label";
-import { Parent } from "@/types/parents";
+import { Parent } from "@/types/parent";
 import { Goal, GoalType } from "@/types/goals";
 import {
   Card,
@@ -35,13 +35,13 @@ import { Badge } from "@/components/ui/badge";
 
 interface NewGoal {
   type: GoalType;
-  description: string;
+  title: string;
   threshold: number;
 }
 
 const defaultNewGoal: NewGoal = {
   type: "stepCount",
-  description: "",
+  title: "",
   threshold: 0,
 };
 
@@ -65,17 +65,24 @@ export default function ParentDashboard({
   }, [id]);
 
   const addGoal = () => {
-    if (newGoal.description.trim() === "") return;
+    if (newGoal.title.trim() === "") return;
 
     const goalToAdd: Goal = {
-      description: newGoal.description,
+      title: newGoal.title,
       completed: false,
       type: newGoal.type,
       threshold: newGoal.threshold,
     };
 
     setParent((prevParent) => {
-      if (!prevParent) return { phoneNumber: "", goals: [goalToAdd] };
+      if (!prevParent)
+        return {
+          parentId: 0,
+          firstName: "",
+          lastname: "",
+          phoneNumber: "",
+          goals: [goalToAdd],
+        };
       return {
         ...prevParent,
         goals: [...prevParent.goals, goalToAdd],
@@ -148,15 +155,15 @@ export default function ParentDashboard({
               </Select>
             </div>
             <div className="flex flex-col space-y-2">
-              <Label htmlFor="goal-description" className="text-primary">
-                Goal Description
+              <Label htmlFor="goal-title" className="text-primary">
+                Title
               </Label>
               <Input
-                id="goal-description"
-                placeholder="Enter goal description"
-                value={newGoal.description}
+                id="goal-title"
+                placeholder="Enter goal title"
+                value={newGoal.title}
                 onChange={(e) =>
-                  setNewGoal({ ...newGoal, description: e.target.value })
+                  setNewGoal({ ...newGoal, title: e.target.value })
                 }
                 className="bg-secondary text-secondary-foreground"
               />
@@ -225,7 +232,7 @@ export default function ParentDashboard({
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="text-lg font-semibold text-primary">
-                          {goal.description}
+                          {goal.title}
                         </h3>
                         {goal.type === "stepCount" && (
                           <p className="text-sm text-secondary-foreground">
