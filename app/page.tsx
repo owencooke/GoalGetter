@@ -1,154 +1,119 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import {
-  Moon,
-  Star,
-  Award,
-  Home,
-  ChevronRight,
-  Activity,
-  User,
-} from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-
+import Link from 'next/link'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { Button } from "@/components/ui/button"
+import { Trophy, Footprints, Target, ChevronRight } from "lucide-react"
 import { Child } from "@/types/child";
 
 export default function KidsDashboard({ child }: { child: Child }) {
   const [stepCount, setStepCount] = useState(6234);
   const [streakDays, setStreakDays] = useState(5);
   const [sleepHours, setSleepHours] = useState(8.5);
+  
+  const currentGoal = {
+    title: "Walk to the Moon",
+    description: "Take enough steps to cover the distance to the moon!",
+    progress: 65,
+  }
 
-  const dailyStepGoal = 10000;
-  const stepProgress = (stepCount / dailyStepGoal) * 100;
+  const dailyActivity = {
+    steps: 8423,
+    calories: 320,
+    distance: 6.7,
+  }
+
+  const achievements = [
+    { id: 1, title: "First 1000 Steps", completed: true },
+    { id: 2, title: "Week-long Streak", completed: true },
+    { id: 3, title: "Marathon Master", completed: false },
+  ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary/20 flex items-center justify-center">
-              <User className="w-10 h-10 md:w-12 md:h-12 text-primary" />
-            </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-primary">
-              Hi, Tommy!
-            </h1>
-          </div>
-          <nav>
-            <ul className="flex space-x-4 md:space-x-6">
-              <li>
-                <Home className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-              </li>
-              <li>
-                <Activity className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-              </li>
-              <li>
-                <Award className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-              </li>
-            </ul>
-          </nav>
-        </header>
+    <div className="container mx-auto p-4 space-y-6">
+      <h1 className="text-3xl font-bold mb-6">Hey, NAME!</h1>
+      
+      {/* Current Goal Progress */}
+      <Link href="/goal" className="block">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Target className="mr-2" />
+              Current Goal
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <h3 className="text-xl font-semibold mb-2">{currentGoal.title}</h3>
+            <p className="text-muted-foreground mb-4">{currentGoal.description}</p>
+            <Progress value={currentGoal.progress} className="w-full" />
+            <p className="text-right mt-2">{currentGoal.progress}% complete</p>
+          </CardContent>
+          <CardFooter>
+            <Button variant="ghost" className="w-full justify-between">
+              View Goal Details <ChevronRight size={20} />
+            </Button>
+          </CardFooter>
+        </Card>
+      </Link>
 
-        <main className="space-y-6 md:space-y-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl md:text-2xl">
-                Today's Activity
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div className="bg-secondary/50 p-4 rounded-lg">
-                  <p className="text-3xl md:text-4xl font-bold text-primary">
-                    {stepCount}
-                  </p>
-                  <p className="text-sm md:text-base text-muted-foreground">
-                    Steps
-                  </p>
-                </div>
-                <div className="bg-secondary/50 p-4 rounded-lg">
-                  <p className="text-3xl md:text-4xl font-bold text-primary">
-                    {streakDays}
-                  </p>
-                  <p className="text-sm md:text-base text-muted-foreground">
-                    Day Streak
-                  </p>
-                </div>
-                <div className="bg-secondary/50 p-4 rounded-lg">
-                  <p className="text-3xl md:text-4xl font-bold text-primary">
-                    {sleepHours}
-                  </p>
-                  <p className="text-sm md:text-base text-muted-foreground">
-                    Hours of Sleep
-                  </p>
-                </div>
+      {/* Daily Activity */}
+      <Link href="/activity" className="block">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Footprints className="mr-2" />
+              Today's Activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <span className="text-4xl font-bold">{dailyActivity.steps}</span>
+                <span className="ml-2 text-xl text-muted-foreground">steps</span>
               </div>
-            </CardContent>
-          </Card>
+              <div className="text-right">
+                <p>{dailyActivity.calories} calories</p>
+                <p>{dailyActivity.distance} km</p>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button variant="ghost" className="w-full justify-between">
+              View Activity Details <ChevronRight size={20} />
+            </Button>
+          </CardFooter>
+        </Card>
+      </Link>
 
-          <div className="md:grid md:grid-cols-2 md:gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl md:text-2xl">
-                  Step Goal Progress
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <Progress value={stepProgress} className="h-4 md:h-6" />
-                  <p className="text-sm md:text-base text-muted-foreground font-medium">
-                    {stepCount} / {dailyStepGoal} steps
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl md:text-2xl">
-                  Your Achievements
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-around">
-                  <div className="text-center">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary/50 flex items-center justify-center mb-2">
-                      <Star className="w-10 h-10 md:w-12 md:h-12 text-primary" />
-                    </div>
-                    <p className="text-sm md:text-base font-medium text-muted-foreground">
-                      Star Stepper
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary/50 flex items-center justify-center mb-2">
-                      <Moon className="w-10 h-10 md:w-12 md:h-12 text-primary" />
-                    </div>
-                    <p className="text-sm md:text-base font-medium text-muted-foreground">
-                      Sleep Champ
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary/50 flex items-center justify-center mb-2">
-                      <Award className="w-10 h-10 md:w-12 md:h-12 text-primary" />
-                    </div>
-                    <p className="text-sm md:text-base font-medium text-muted-foreground">
-                      5 Day Streak
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
-
-        <footer className="mt-8 text-center">
-          <Button size="lg" className="font-semibold">
-            See More <ChevronRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
-          </Button>
-        </footer>
-      </div>
+      {/* Achievements */}
+      <Link href="/achievements" className="block">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Trophy className="mr-2" />
+              My Achievements
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-4">
+              {achievements.map((achievement) => (
+                <li key={achievement.id} className="flex items-center">
+                  <Trophy className={`mr-4 h-6 w-6 ${achievement.completed ? 'text-yellow-500' : 'text-gray-300'}`} />
+                  <span className={`text-lg ${achievement.completed ? 'font-medium' : 'text-muted-foreground'}`}>
+                    {achievement.title}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+          <CardFooter>
+            <Button variant="ghost" className="w-full justify-between">
+              View All Achievements <ChevronRight size={20} />
+            </Button>
+          </CardFooter>
+        </Card>
+      </Link>
     </div>
-  );
+  )
 }
