@@ -54,7 +54,7 @@ export default function Navigation() {
   );
 
   return (
-    <nav className="bg-white dark:bg-black text-black dark:text-white border-b border-gray-200 dark:border-gray-800 p-4 sticky top-0 z-10">
+    <nav className="bg-white dark:bg-black text-primary dark:text-white border-b border-gray-200 dark:border-gray-800 p-4 sticky top-0 z-10">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="text-xl font-bold">
           KidsStepTracker

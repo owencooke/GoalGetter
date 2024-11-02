@@ -84,50 +84,48 @@ export default function KidsDashboard({ child }: { child: Child }) {
         animate={controls}
         variants={cardVariants}
       >
-        <Link href="/goal" className="block">
-          <Card className="hover:shadow-md transition-all duration-500 transform hover:scale-[1.02]">
-            <CardHeader>
-              <CardTitle className="flex items-center text-2xl">
-                <Target className="mr-2 text-primary" />
-                <TypingAnimation text="Current Goals" delay={200} />
-              </CardTitle>
-            </CardHeader>
-            {parent && parent.goals.map((currentGoal, index) => {
-              let progressValue = 0;
-              let currentValue = 0;
-              console.log(currentGoal)
+        <Card className="hover:shadow-md transition-all duration-500 transform hover:scale-[1.02]">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl">
+              <Target className="mr-2 text-primary" />
+              <TypingAnimation text="Current Goals" delay={200} />
+            </CardTitle>
+          </CardHeader>
+          {parent && parent.goals.map((currentGoal, index) => {
+            let progressValue = 0;
+            let currentValue = 0;
+            console.log(currentGoal)
 
-              // Determine current value and progress based on goal type
-              if (currentGoal.type === "stepCount") {
-                currentValue = todayStats?.stepsTaken || 0;
-                progressValue = (currentValue / currentGoal.threshold) * 100;
-              } else if (currentGoal.type === "hoursOfSleep") {
-                currentValue = todayStats?.hoursSlept || 0;
-                progressValue = (currentValue / currentGoal.threshold) * 100;
-              } else if (currentGoal.type === "calories") {
-                currentValue = todayStats?.caloriesBurned || 0;
-                progressValue = (currentValue / currentGoal.threshold) * 100;
-              }
+            // Determine current value and progress based on goal type
+            if (currentGoal.type === "stepCount") {
+              currentValue = todayStats?.stepsTaken || 0;
+              progressValue = (currentValue / currentGoal.threshold) * 100;
+            } else if (currentGoal.type === "hoursOfSleep") {
+              currentValue = todayStats?.hoursSlept || 0;
+              progressValue = (currentValue / currentGoal.threshold) * 100;
+            } else if (currentGoal.type === "calories") {
+              currentValue = todayStats?.caloriesBurned || 0;
+              progressValue = (currentValue / currentGoal.threshold) * 100;
+            }
 
-              if (progressValue >= 100 || currentGoal.completed) {
-                return;
-              }
+            if (progressValue >= 100 || currentGoal.completed) {
+              return;
+            }
 
-              return (
-                <CardContent key={index}>
-                  <h3 className="text-xl font-semibold mb-2">
-                    <TypingAnimation text={currentGoal.title} delay={400} />
-                  </h3>
-                  <AnimatedProgress value={progressValue} delay={600} />
-                  <div className="flex justify-between mt-2 text-sm">
-                    <p>{currentValue} / {currentGoal.threshold} {currentGoal.type === "stepCount" ? "steps" : currentGoal.type === "hoursOfSleep" ? "hours" : "calories"}</p>
-                    <p>{progressValue.toFixed(2)}% complete</p>
-                  </div>
-                </CardContent>
-              );
-            })}
-          </Card>
-        </Link>
+            return (
+              <CardContent key={index}>
+                <h3 className="text-xl font-semibold mb-2">
+                  <TypingAnimation text={currentGoal.title} delay={400} />
+                </h3>
+                <AnimatedProgress value={progressValue} delay={600} />
+                <div className="flex justify-between mt-2 text-sm">
+                  <p>{currentValue} / {currentGoal.threshold} {currentGoal.type === "stepCount" ? "steps" : currentGoal.type === "hoursOfSleep" ? "hours" : "calories"}</p>
+                  <p>{progressValue.toFixed(2)}% complete</p>
+                </div>
+              </CardContent>
+            );
+          })}
+        </Card>
       </motion.div>
 
       <motion.div
