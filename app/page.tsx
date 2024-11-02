@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Trophy, Footprints, Target, ChevronRight } from "lucide-react"
 import { Child } from "@/types/child";
+import { useState } from 'react'
 
 export default function KidsDashboard({ child }: { child: Child }) {
   const [stepCount, setStepCount] = useState(6234);
