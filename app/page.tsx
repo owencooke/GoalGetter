@@ -5,9 +5,13 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Trophy, Footprints, Target, ChevronRight } from "lucide-react"
+import { Child } from "@/types/child";
 
-export default function KidsDashboard() {
-  // Mock data - replace with actual data fetching logic
+export default function KidsDashboard({ child }: { child: Child }) {
+  const [stepCount, setStepCount] = useState(6234);
+  const [streakDays, setStreakDays] = useState(5);
+  const [sleepHours, setSleepHours] = useState(8.5);
+  
   const currentGoal = {
     title: "Walk to the Moon",
     description: "Take enough steps to cover the distance to the moon!",

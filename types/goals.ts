@@ -1,5 +1,11 @@
 export interface Goal {
-    id: number;
-    description: string;
-    completed: boolean;
+  id: number;
+  title: string;
+  description: string;
+  completed: boolean;
+  type: GoalType;
+  threshold: number;
+  dateCreated: Date;
 }
+
+export type GoalType = "stepCount" | "hoursOfSleep";
