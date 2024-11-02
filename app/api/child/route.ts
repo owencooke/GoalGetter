@@ -7,7 +7,9 @@ const childData: Child = {
   firstName: "John",
   lastname: "Doe",
   phoneNumber: "123-456-7890",
-  goals: [],
+  lat: 37.7749,
+  long: -122.4194,
+  dailyStats: [],
 };
 
 export async function GET(request: Request) {
