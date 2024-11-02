@@ -1,7 +1,7 @@
 import { Goal } from "./goals";
 
 export interface Parent {
-  parentId: number;
+  id: string;
   firstName: string;
   lastname: string;
   phoneNumber: string;
