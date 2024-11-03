@@ -15,8 +15,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Kids Step Tracker",
-  description: "A fun step tracking app for kids",
+  title: "GoalGetter",
+  description: "A fun activity tracking app for kids",
 };
 
 export default function RootLayout({
