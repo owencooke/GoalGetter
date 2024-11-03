@@ -53,7 +53,7 @@ export default function KidsDashboard() {
           <Card>
             <CardHeader>
               <CardTitle className="text-xl md:text-2xl">
-                Today's Activity
+                {`Today's Activity`}
               </CardTitle>
             </CardHeader>
             <CardContent>

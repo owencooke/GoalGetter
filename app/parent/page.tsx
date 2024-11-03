@@ -228,13 +228,13 @@ export default function ParentDashboard() {
                 Current Goals
               </CardTitle>
               <CardDescription className="text-secondary-foreground">
-                Track your child's progress
+                {`Track your child's progress`}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {parent?.goals.length === 0 ? (
                 <p className="text-muted-foreground text-center py-4">
-                  No goals set yet. Let's add some!
+                  {`No goals set yet. Let's add some!`}
                 </p>
               ) : (
                 <AnimatePresence>
@@ -261,39 +261,26 @@ export default function ParentDashboard() {
                           </p>
                         </div>
                         <div className="flex items-center space-x-2">
-                        <Badge
-                            variant={
-                                goal.type
-                                    ? "secondary"
-                                    : "default"
-                            }
-                        >
+                          <Badge variant={goal.type ? "secondary" : "default"}>
                             {(() => {
-                                const latestStats =
-                                    parent.children[0]?.dailyStats?.at(
-                                        -1
-                                    );
-                                if (!latestStats)
-                                    return "No Data from child today";
+                              const latestStats =
+                                parent.children[0]?.dailyStats?.at(-1);
+                              if (!latestStats)
+                                return "No Data from child today";
 
-                                if (
-                                    (goal.type ===
-                                        "stepCount" &&
-                                        latestStats.stepsTaken >=
-                                            goal.threshold) ||
-                                    (goal.type ===
-                                        "calories" &&
-                                        latestStats.caloriesBurned >=
-                                            goal.threshold) ||
-                                    (goal.type ===
-                                        "hoursOfSleep" &&
-                                        latestStats.hoursSlept >=
-                                            goal.threshold)
-                                ) {
-                                    return "Completed ✅";
-                                } else {
-                                    return "In Progress ⏳";
-                                }
+                              if (
+                                (goal.type === "stepCount" &&
+                                  latestStats.stepsTaken >= goal.threshold) ||
+                                (goal.type === "calories" &&
+                                  latestStats.caloriesBurned >=
+                                    goal.threshold) ||
+                                (goal.type === "hoursOfSleep" &&
+                                  latestStats.hoursSlept >= goal.threshold)
+                              ) {
+                                return "Completed ✅";
+                              } else {
+                                return "In Progress ⏳";
+                              }
                             })()}
                           </Badge>
                           <Button
